@@ -8,6 +8,20 @@ const closeModalBtn = document.getElementById("close-modal-btn")
 const cartCounter = document.getElementById("cart-count")
 const addressInput = document.getElementById("address")
 const addressWarn = document.getElementById("address-warn")
+const toggleButtons = document.querySelectorAll('.toggle-category');
+
+toggleButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    const content = button.nextElementSibling;
+    const icon = button.querySelector('i');
+
+    content.classList.toggle('hidden');
+    icon.classList.toggle('rotate-180'); // animação da seta
+  });
+});
+
+
+
 
 
 let cart = [];
@@ -178,16 +192,21 @@ checkoutBtn.addEventListener("click", function(){
   }
 
   //Enviar o pedido para api whats
-  const cartItems = cart.map((item) => {
+  const cartItems = cart.map((item, index) => {
     return (
-      ` ${item.name} Quantidade: (${item.quantity}) Preço: R$${item.price} |`
-    )
-  }).join("")
-
-  const message = encodeURIComponent(cartItems)
-  const phone = "5517997496112"
-
-  window.open(`https://wa.me/${phone}?text=${message} Endereço: ${addressInput.value}`, "_blank")
+      `🍽️ *${index + 1}. ${item.name}*\nQuantidade: ${item.quantity}\nSubtotal: R$ ${(item.price * item.quantity).toFixed(2)}`
+    );
+  }).join("\n\n");
+  
+  const message = encodeURIComponent(
+    `📦 *Novo Pedido!*\n\n${cartItems}\n\n📍 *Endereço de entrega:*\n${addressInput.value}`
+  );
+  
+  const phone = "5517997496112";
+  window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
+  
+  
+  
 
   cart = [];
   updateCartModal();
